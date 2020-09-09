@@ -7,8 +7,8 @@ import re
 class Jokes:
     def __init__(self):
         self.http = urllib3.PoolManager()
-        self.info = self.http.request('GET', "https://sv443.net/jokeapi/v2/info")
-        print("Sv443's JokeAPI")
+        self.info = json.loads(self.http.request('GET', "https://sv443.net/jokeapi/v2/info").data.decode('utf-8'))['jokes']
+        # print("Sv443's JokeAPI")
 
     def build_request(
         self,
@@ -25,7 +25,7 @@ class Jokes:
 
         if len(category):
             for c in category:
-                if not c.lower() in self.info["categories"]:
+                if not c.title() in self.info["categories"]:
                     raise ValueError(
                         f'''Invalid category selected.
                         You selected {c}.
@@ -181,4 +181,4 @@ class Jokes:
         )
 
         response = self.send_request(r, response_format, return_headers, auth_token, user_agent)
-        return response
+        return response[0]
